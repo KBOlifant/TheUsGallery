@@ -1,0 +1,210 @@
+@import 'tailwindcss';
+
+/*
+ * Aperture design tokens.
+ * Each theme defines the same roles; Tailwind colour utilities point at them,
+ * so `bg-ground`, `text-muted`, `border-line` etc. switch with [data-theme].
+ */
+:root,
+[data-theme='dark'] {
+  --ground: #0a0a0a;
+  --surface: #141615;
+  --raised: #1e201f;
+  --line: #262826;
+  --line-strong: #3a3d3a;
+  --text: #eceae4;
+  --muted: #9a978f;
+  --accent: #d6f04f;
+  --on-accent: #0a0a0a;
+  --glow: #14180c;
+  --eyebrow: var(--muted);
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --ground: #f4f2ec;
+  --surface: #ffffff;
+  --raised: #e9e6de;
+  --line: #d8d5cc;
+  --line-strong: #bfbbb0;
+  --text: #151515;
+  --muted: #65625b;
+  --accent: #5a6a08;
+  --on-accent: #ffffff;
+  --glow: #e4e8cf;
+  color-scheme: light;
+}
+
+/*
+ * Palettes recolour the app independently of dark/light: <html> carries both
+ * data-theme (mode) and data-palette. The default palette (lime) is the base above.
+ */
+[data-palette='purple'][data-theme='dark'] {
+  --ground: #0f0a16;
+  --surface: #181120;
+  --raised: #241a30;
+  --line: #31223f;
+  --line-strong: #46325a;
+  --text: #efe8f6;
+  --muted: #a99bb8;
+  --accent: #a678f2;
+  --on-accent: #0f0a16;
+  --glow: #1f1030;
+}
+
+[data-palette='purple'][data-theme='light'] {
+  --ground: #f5f2f9;
+  --surface: #ffffff;
+  --raised: #ebe5f2;
+  --line: #ddd4e8;
+  --line-strong: #c4b7d4;
+  --text: #17121e;
+  --muted: #655c73;
+  --accent: #6d3fc4;
+  --on-accent: #ffffff;
+  --glow: #e6dcf5;
+}
+
+[data-palette='orange'][data-theme='dark'] {
+  --ground: #140c06;
+  --surface: #1e130a;
+  --raised: #2b1c10;
+  --line: #3b2817;
+  --line-strong: #52391f;
+  --text: #f6ece2;
+  --muted: #b5a08c;
+  --accent: #ff8a2b;
+  --on-accent: #140c06;
+  --glow: #2a1608;
+}
+
+[data-palette='orange'][data-theme='light'] {
+  --ground: #f9f4ee;
+  --surface: #ffffff;
+  --raised: #f1e8dd;
+  --line: #e6d9c9;
+  --line-strong: #d1bfa8;
+  --text: #1c140d;
+  --muted: #6f6254;
+  --accent: #b8500a;
+  --on-accent: #ffffff;
+  --glow: #f7e2cc;
+}
+
+/*
+ * Light mode leans on the palette: eyebrows are a darkened accent, and the
+ * borders / dividers are the accent tinted into the page colour.
+ */
+[data-theme='light'][data-palette] {
+  --eyebrow: color-mix(in srgb, var(--accent) 80%, black);
+  --line: color-mix(in srgb, var(--accent) 30%, var(--ground));
+  --line-strong: color-mix(in srgb, var(--accent) 55%, var(--ground));
+}
+
+/* light:* utilities apply only in light mode. */
+@custom-variant light (&:where([data-theme='light'], [data-theme='light'] *));
+
+@theme inline {
+  --color-eyebrow: var(--eyebrow);
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-glow: var(--glow);
+}
+
+@theme {
+  /* Fixed colours for text that sits on artwork, whatever the theme. */
+  --color-paper: #eceae4;
+  --color-ink: #0a0a0a;
+
+  --font-sans: var(--font-dm-sans), 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-italiana), 'Italiana', ui-serif, Georgia, serif;
+
+  /* Type scale (Aperture · 02 Typography). Display sizes are fluid below desktop. */
+  --text-display-xl: clamp(3.5rem, 9vw, 8rem);
+  --text-display-xl--line-height: 0.95;
+  --text-display-xl--letter-spacing: -0.01em;
+  --text-display-l: clamp(2.75rem, 5.5vw, 4.5rem);
+  --text-display-l--line-height: 1;
+  --text-display-m: clamp(2.25rem, 3.6vw, 2.75rem);
+  --text-display-m--line-height: 1.1;
+  --text-display-s: 1.75rem;
+  --text-display-s--line-height: 1.2;
+  --text-body-l: 1.125rem;
+  --text-body-l--line-height: 1.7;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.7;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.5;
+  --text-caption--letter-spacing: 0.04em;
+
+  /* Spacing: Tailwind's default 4px step already matches; these are the named ones. */
+  --spacing-gutter: 6rem;
+  --spacing-section: 8rem;
+
+  --ease-aperture: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Tracked uppercase metadata: eyebrows, buttons, nav, counters. */
+@utility label {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Page side padding: 20px phone, 40px tablet, 96px desktop. */
+@utility px-page {
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 6rem;
+  }
+}
+
+@layer base {
+  html {
+    background: var(--ground);
+  }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 600ms var(--ease-aperture),
+      color 600ms var(--ease-aperture);
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  :focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 3px;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: default;
+  }
+}
+
+/* Hide the scrollbar on horizontal artwork rows; prev/next buttons and drag remain. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
