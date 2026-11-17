@@ -7,8 +7,8 @@ const sans = DM_Sans({ subsets: ['latin'], weight: ['300', '400', '500'], variab
 const display = Italiana({ subsets: ['latin'], weight: '400', variable: '--font-italiana' })
 
 export const metadata = {
-  title: { default: 'Aperture', template: '%s · Aperture' },
-  description: 'Aperture — an independent digital exhibition of contemporary image-making, art, and visual culture.',
+  title: { default: 'TheUsGallery', template: '%s · TheUsGallery' },
+  description: 'TheUsGallery — an independent digital exhibition of contemporary image-making, art, and visual culture.',
 }
 
 // Apply the saved theme before first paint to avoid a flash.

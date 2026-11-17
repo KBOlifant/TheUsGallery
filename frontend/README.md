@@ -1,7 +1,7 @@
-# Aperture — frontend
+# TheUsGallery — frontend
 
 Next.js 16 (App Router) · React 19 · Tailwind CSS v4 · Framer Motion · Lenis (home) · Locomotive Scroll v5 (other pages).
-Styled with the Aperture design system (Dark / Pink / Light themes).
+Styled with the TheUsGallery design system (Dark / Pink / Light themes).
 The API (MongoDB · Firebase Admin · Cloudinary · EmailJS) runs in the same app as route handlers under `src/app/api`.
 
 ```bash
@@ -30,7 +30,7 @@ src/
     home/         Hero, CategoryCarousel, CategoryCard
     gallery/      CollectionSection, ArtworkRow, ArtworkCard
     artwork/      ArtworkModal, VisitorNotes
-  index.css       Aperture tokens → Tailwind theme (bg-ground, text-muted, border-line, font-display, text-display-l …)
+  index.css       TheUsGallery tokens → Tailwind theme (bg-ground, text-muted, border-line, font-display, text-display-l …)
 ```
 
 ## Routes

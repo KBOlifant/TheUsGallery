@@ -1,12 +1,18 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import tgLogo from '../../assets/TG_Logo.png'
 import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 import { AccountControl } from '../auth/AccountControl'
 import { scrollToTarget } from '../../lib/scroll'
 
 export function Wordmark({ className = '' }) {
   return (
-    <Link href="/" aria-label="Aperture — home" className={`font-display text-[28px] leading-none text-text ${className}`}>
-      Aperture<span className="align-super text-xs text-accent">°</span>
+    <Link href="/" aria-label="TheUsGallery — home" className={`font-display text-[28px] leading-none text-text ${className}`}>
+      {/* Mobile: TG logo mark. Desktop: full wordmark. */}
+      <Image src={tgLogo} alt="" width={40} height={40} priority className="h-10 w-10 rounded-lg md:hidden" />
+      <span className="hidden md:inline">
+        TheUsGallery<span className="align-super text-xs text-accent">°</span>
+      </span>
     </Link>
   )
 }

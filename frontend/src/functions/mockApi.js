@@ -1,5 +1,5 @@
 /*
- * In-browser mock of the Aperture backend.
+ * In-browser mock of the TheUsGallery backend.
  * Same function signatures and return shapes as the real API (see api.js / README).
  * Saves and visitor notes persist in localStorage so they survive a reload.
  */

@@ -1,4 +1,4 @@
-// Aperture motion: 600ms, cubic-bezier(.2,.7,.2,1). Slow reveals, image scale 1.04 on hover.
+// TheUsGallery motion: 600ms, cubic-bezier(.2,.7,.2,1). Slow reveals, image scale 1.04 on hover.
 export const ease = [0.2, 0.7, 0.2, 1]
 export const duration = 0.6
 

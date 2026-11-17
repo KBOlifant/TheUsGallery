@@ -108,13 +108,29 @@ export function CategoryCarousel({ categories, initialIndex = 1, overlay, onEnte
           </motion.ul>
         </div>
         {overlay}
+
+        {/* Mobile: arrows sit inside the stage, by the outer edges of the image. */}
+        <IconButton
+          icon="arrow-left"
+          aria-label="Previous category"
+          onClick={() => goTo(index - 1)}
+          disabled={index === 0}
+          className="absolute left-3 top-1/2 z-10 -translate-y-1/2 bg-ground/60 backdrop-blur-sm md:hidden"
+        />
+        <IconButton
+          icon="arrow-right"
+          aria-label="Next category"
+          onClick={() => goTo(index + 1)}
+          disabled={index === categories.length - 1}
+          className="absolute right-3 top-1/2 z-10 -translate-y-1/2 bg-ground/60 backdrop-blur-sm md:hidden"
+        />
       </div>
 
       <div className="px-page flex flex-wrap items-center gap-x-8 gap-y-4 border-t border-line bg-ground py-4">
         <div className="flex w-full min-w-0 flex-1 items-center gap-6 md:w-auto md:max-w-3xl">
           <ProgressBar value={(index + 1) / categories.length} className="flex-1" />
           <Counter current={index + 1} total={categories.length} />
-          <div className="flex gap-3">
+          <div className="hidden gap-3 md:flex">
             <IconButton icon="arrow-left" aria-label="Previous category" onClick={() => goTo(index - 1)} disabled={index === 0} />
             <IconButton
               icon="arrow-right"

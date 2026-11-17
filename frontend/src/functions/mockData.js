@@ -1,5 +1,5 @@
 /*
- * Mock data for the Aperture frontend.
+ * Mock data for the TheUsGallery frontend.
  *
  * The shapes here are the API contract the backend should return (see README).
  * "Human" mirrors the Gallery wireframe; the other categories are sample content.

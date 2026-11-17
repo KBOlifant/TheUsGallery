@@ -1,5 +1,5 @@
 /*
- * Public API for the Aperture frontend. Components import from here only.
+ * Public API for the TheUsGallery frontend. Components import from here only.
  *
  * Calls go to the real API (src/app/api) by default. Set NEXT_PUBLIC_USE_MOCK=true
  * to route every call to the in-browser mock instead (the tests do this);
