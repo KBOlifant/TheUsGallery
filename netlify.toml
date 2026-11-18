@@ -2,6 +2,10 @@
   base = "frontend"
   command = "npm run build"
 
+# The log showed no Next.js runtime step, so install it explicitly.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
 [build.environment]
   NODE_VERSION = "20"
   # False positives: the path value ("./serviceAccountKey.json") is also the default in
