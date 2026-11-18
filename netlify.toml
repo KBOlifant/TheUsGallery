@@ -1,6 +1,7 @@
 [build]
   base = "frontend"
   command = "npm run build"
+  publish = ".next"
 
 # The log showed no Next.js runtime step, so install it explicitly.
 [[plugins]]
