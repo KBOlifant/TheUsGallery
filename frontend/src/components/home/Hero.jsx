@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { fadeUp, lineUp, stagger } from '../../lib/motion'
 import { Eyebrow } from '../ui/Bits'
 
-const lines = ['Explore The', 'Us Gallary']
+const lines = ['Explore The', 'Us Gallery']
 
 export function Hero() {
   return (
