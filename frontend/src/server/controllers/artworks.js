@@ -7,11 +7,19 @@ import { toArtworkDetail, toArtworkSummary } from '../utils/serialize.js'
 import { interactionSets } from '../utils/interactions.js'
 import { uploadImage } from '../cloudinary.js'
 import { slugify } from '../utils/slug.js'
+import { extractImageMeta } from '../utils/imageMeta.js'
 
-/** POST /artworks  (multipart: image + categoryId, collectionId, title, artist?, year?, alt?) */
+/** "IMG_2041-beach_day.JPG" → "IMG 2041 beach day" */
+const titleFromFilename = (name = '') =>
+  name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim()
+
+/**
+ * POST /artworks  (multipart: image + categoryId, collectionId). One image per request —
+ * the client queues multi-file uploads. The title comes from the filename; the year and
+ * every other detail come from the image's embedded metadata.
+ */
 export async function createArtwork({ body, file, user }) {
-  const { categoryId, collectionId, title, artist, year, alt } = body
-  if (!title?.trim()) throw new ApiError('Title is required', 400)
+  const { categoryId, collectionId } = body
   if (!categoryId || !collectionId) throw new ApiError('categoryId and collectionId are required', 400)
   if (!file) throw new ApiError('An image file is required', 400)
 
@@ -20,7 +28,11 @@ export async function createArtwork({ body, file, user }) {
   const collection = await Collection.findOne({ slug: collectionId, categoryId: category._id }).lean()
   if (!collection) throw new ApiError(`Collection "${collectionId}" not found in category "${categoryId}"`, 404)
 
-  const uploaded = await uploadImage(file.buffer)
+  const title = titleFromFilename(file.filename) || 'Untitled'
+  const [{ takenAt, year, meta }, uploaded] = await Promise.all([
+    extractImageMeta(file.buffer, file),
+    uploadImage(file.buffer),
+  ])
 
   // Unique slug derived from the title.
   const base = slugify(title) || 'untitled'
@@ -37,11 +49,13 @@ export async function createArtwork({ body, file, user }) {
     slug,
     categoryId: category._id,
     collectionId: collection._id,
-    title: title.trim(),
-    artist: artist?.trim() || user.displayName || '',
-    year: year ? Number(year) : undefined,
+    title,
+    artist: '',
+    year,
+    takenAt,
+    meta,
     ratio,
-    image: { src: uploaded.secure_url, publicId: uploaded.public_id, gradient: '', alt: alt?.trim() || title.trim() },
+    image: { src: uploaded.secure_url, publicId: uploaded.public_id, gradient: '', alt: title },
     order,
     uploadedBy: user._id,
   })

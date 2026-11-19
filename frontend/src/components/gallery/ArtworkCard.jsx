@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { fadeUp } from '../../lib/motion'
 import { setNavIntent } from '../../lib/navIntent'
-import { pad2 } from '../../lib/format'
+import { formatTakenDate, pad2 } from '../../lib/format'
 import { toggleSaved, useArtworkState } from '../../lib/artworkStore'
 import { ArtImage } from '../ui/ArtImage'
 import { IndexChip } from '../ui/Bits'
@@ -18,6 +18,8 @@ export function ArtworkCard({ artwork, number }) {
   const router = useRouter()
   const to = artworkPath(work)
   const widthScale = Math.sqrt(work.ratio / 0.8).toFixed(3)
+  // Screen-reader name that doesn't reveal the image's file name.
+  const label = `work ${pad2(number)}, ${formatTakenDate(work)}`
 
   return (
     <motion.li
@@ -39,14 +41,13 @@ export function ArtworkCard({ artwork, number }) {
               href={to}
               scroll={false}
               onClick={() => setNavIntent(work.id)}
+              aria-label={`Open ${label}`}
               className="after:absolute after:inset-0 after:content-['']"
             >
-              {work.title}
+              {/* Image names stay private; only the year (from metadata) is shown. */}
+              {formatTakenDate(work)}
             </Link>
           </h3>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-muted">
-            {work.artist} · {work.year}
-          </p>
         </div>
 
         <div className="relative z-10 flex gap-1.5 pt-1">
@@ -55,7 +56,7 @@ export function ArtworkCard({ artwork, number }) {
             icon="heart"
             active={work.saved}
             aria-pressed={work.saved}
-            aria-label={work.saved ? `Remove ${work.title} from saved` : `Save ${work.title}`}
+            aria-label={work.saved ? `Remove ${label} from saved` : `Save ${label}`}
             onClick={() => toggleSaved(work).catch(() => {})}
           />
           <button
@@ -64,7 +65,7 @@ export function ArtworkCard({ artwork, number }) {
               setNavIntent(work.id, { focusNotes: true })
               router.push(to, { scroll: false })
             }}
-            aria-label={`${work.noteCount} visitor notes on ${work.title}`}
+            aria-label={`${work.noteCount} visitor notes on ${label}`}
             className="relative inline-flex h-7 min-w-7 items-center justify-center gap-1 border border-line-strong px-1.5 text-[10px] text-text transition-colors duration-300 hover:border-text before:absolute before:-inset-2 before:content-['']"
           >
             <Icon name="comment" size={13} />

@@ -3,8 +3,11 @@
  * exists; when the API starts returning `image.src`, it is layered on top.
  */
 export function ArtImage({ image, className = '', hoverZoom = true }) {
+  // Only default to `relative` when the caller hasn't positioned it: with both
+  // `relative` and `absolute` set, `.relative` wins in the CSS and the box collapses to 0px tall.
+  const positioned = /(^|\s)(absolute|fixed|sticky)(\s|$)/.test(className)
   return (
-    <div className={`relative overflow-hidden ${className}`}>
+    <div className={`${positioned ? '' : 'relative '}overflow-hidden ${className}`}>
       <div
         role="img"
         aria-label={image.alt}

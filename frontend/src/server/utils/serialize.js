@@ -35,6 +35,7 @@ export function toArtworkSummary(artwork, { categorySlug, collectionSlug, savedI
     title: artwork.title,
     artist: artwork.artist,
     year: artwork.year,
+    meta: artwork.meta || {},
     ratio: artwork.ratio,
     image: { gradient: artwork.image?.gradient || '', alt: artwork.image?.alt || '', src: artwork.image?.src || '' },
     categoryId: categorySlug,

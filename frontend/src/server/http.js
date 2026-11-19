@@ -113,7 +113,7 @@ async function readBody(request, fileField) {
     if (!upload.type.startsWith('image/')) throw new ApiError('Only image files are allowed', 400)
     if (upload.size > MAX_IMAGE_BYTES) throw new ApiError('Image is too large (max 10 MB)', 400)
     const buffer = Buffer.from(await upload.arrayBuffer())
-    return { body, file: { buffer, mimetype: upload.type, size: upload.size } }
+    return { body, file: { buffer, mimetype: upload.type, size: upload.size, filename: upload.name } }
   }
 
   if (type.includes('application/json')) {

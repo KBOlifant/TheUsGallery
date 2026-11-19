@@ -55,8 +55,9 @@ export const setLiked = (artworkId, liked) =>
     : request(`/artworks/${enc(artworkId)}/like`, { method: liked ? 'PUT' : 'DELETE' })
 
 /**
- * Upload a new artwork. `fields` = { categoryId, collectionId, title, artist?, year?, alt? }.
- * `file` is a File/Blob. Returns the created ArtworkSummary.
+ * Upload one image. `fields` = { categoryId, collectionId }. `file` is a File/Blob.
+ * The server reads the title, year and other details from the file itself.
+ * Returns the created ArtworkSummary. Multi-file uploads queue one call per file (see lib/uploadQueue).
  */
 export const uploadArtwork = (fields, file) => {
   if (USE_MOCK) realOnly('uploadArtwork')

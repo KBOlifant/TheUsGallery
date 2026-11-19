@@ -12,6 +12,8 @@ import { ArtImage } from '../ui/ArtImage'
 import { Counter, Eyebrow } from '../ui/Bits'
 import { Button, IconButton } from '../ui/Button'
 import { VisitorNotes } from './VisitorNotes'
+import { MetaToggle } from './MetaToggle'
+import { formatTakenDate, formatTakenTime } from '../../lib/format'
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea, [tabindex]:not([tabindex="-1"])'
 
@@ -113,8 +115,7 @@ export function ArtworkModal({ categoryId, workId }) {
               <div className="aspect-[3/4] w-full bg-surface" aria-hidden="true" />
             )}
           </div>
-          <div className="flex justify-between text-[10px] tracking-[0.18em] text-muted">
-            <span>{work?.year}</span>
+          <div className="flex justify-end text-[10px] tracking-[0.18em] text-muted">
             {work && <Counter current={work.position} total={work.total} className="text-[10px]" />}
           </div>
         </div>
@@ -133,13 +134,13 @@ export function ArtworkModal({ categoryId, workId }) {
               <div className="flex flex-col gap-4">
                 <Eyebrow>Selected work</Eyebrow>
                 <h2 id="artwork-title" className="font-display text-[clamp(2.5rem,4.2vw,4rem)] leading-[1.05]">
-                  {work?.title ?? <span className="text-muted">Loading…</span>}
+                  {/* Image names stay private; the name is only shown under "Show meta". */}
+                  {work ? formatTakenDate(work) : <span className="text-muted">Loading…</span>}
                 </h2>
-                {work && (
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted">
-                    {work.artist} · {work.year}
-                  </p>
+                {work && formatTakenTime(work) && (
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted">{formatTakenTime(work)}</p>
                 )}
+                {work && <MetaToggle meta={work.meta} name={work.title} />}
               </div>
 
               {work && isApproved && (
