@@ -8,6 +8,8 @@ import { interactionSets } from '../utils/interactions.js'
 import { uploadImage } from '../cloudinary.js'
 import { slugify } from '../utils/slug.js'
 import { extractImageMeta } from '../utils/imageMeta.js'
+import { deleteArtworks } from '../utils/cascade.js'
+import { noContent } from '../http.js'
 
 /** "IMG_2041-beach_day.JPG" → "IMG 2041 beach day" */
 const titleFromFilename = (name = '') =>
@@ -66,6 +68,7 @@ export async function createArtwork({ body, file, user }) {
       collectionSlug: collection.slug,
       savedIds: new Set(),
       likedIds: new Set(),
+      currentUser: user,
     })
   )
 }
@@ -96,7 +99,20 @@ export async function getArtwork({ params, user }) {
     total,
     savedIds,
     likedIds,
+    currentUser: user,
   })
+}
+
+/** DELETE /artworks/:id  (id = slug) — the uploader may delete their own work; admins may delete any. */
+export async function deleteArtwork({ params, user }) {
+  const artwork = await Artwork.findOne({ slug: params.id }, '_id uploadedBy').lean()
+  if (!artwork) throw new ApiError(`Artwork "${params.id}" not found`, 404)
+
+  const isOwner = artwork.uploadedBy && String(artwork.uploadedBy) === String(user._id)
+  if (!isOwner && user.role !== 'admin') throw new ApiError('You can only delete your own uploads', 403)
+
+  await deleteArtworks({ _id: artwork._id })
+  return noContent()
 }
 
 const toNote = (n) => ({ id: String(n._id), author: n.author, text: n.text, createdAt: n.createdAt.toISOString() })

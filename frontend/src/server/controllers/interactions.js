@@ -91,6 +91,7 @@ export async function getSaved({ user }) {
         collectionSlug: colSlug.get(String(a.collectionId)),
         savedIds,
         likedIds,
+        currentUser: user,
       })
     )
 }

@@ -33,5 +33,5 @@ export async function getCategory({ params, user }) {
 
   const { savedIds, likedIds } = await interactionSets(user?._id, works.map((w) => w._id))
 
-  return toCategoryDetail(category, collections, worksByCollectionId, { savedIds, likedIds })
+  return toCategoryDetail(category, collections, worksByCollectionId, { savedIds, likedIds, currentUser: user })
 }

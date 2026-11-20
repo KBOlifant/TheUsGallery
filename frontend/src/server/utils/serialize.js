@@ -22,13 +22,20 @@ export function toCategorySummary(category, workCount = 0) {
   }
 }
 
+/** True when `currentUser` (the request's authenticated User doc) may delete `artwork`: its uploader, or any admin. */
+function canDelete(artwork, currentUser) {
+  if (!currentUser) return false
+  if (currentUser.role === 'admin') return true
+  return Boolean(artwork.uploadedBy) && String(artwork.uploadedBy) === String(currentUser._id)
+}
+
 /**
  * ArtworkSummary { id, title, artist, year, ratio, image, categoryId, collectionId,
- *                  saved, noteCount, likeCount, liked }
+ *                  saved, noteCount, likeCount, liked, canDelete }
  * `savedIds` / `likedIds` are Sets of artwork _id strings for the current user
- * (empty when unauthenticated).
+ * (empty when unauthenticated). `currentUser` is the authenticated User doc (or null).
  */
-export function toArtworkSummary(artwork, { categorySlug, collectionSlug, savedIds, likedIds } = {}) {
+export function toArtworkSummary(artwork, { categorySlug, collectionSlug, savedIds, likedIds, currentUser } = {}) {
   const id = String(artwork._id)
   return {
     id: artwork.slug,
@@ -44,6 +51,7 @@ export function toArtworkSummary(artwork, { categorySlug, collectionSlug, savedI
     liked: likedIds ? likedIds.has(id) : false,
     noteCount: artwork.noteCount ?? 0,
     likeCount: artwork.likeCount ?? 0,
+    canDelete: canDelete(artwork, currentUser),
   }
 }
 
@@ -68,9 +76,9 @@ export function toCategoryDetail(category, collections, worksByCollectionId, ctx
 }
 
 /** Artwork (detail) = summary + { position, total } within its category. */
-export function toArtworkDetail(artwork, { categorySlug, collectionSlug, position, total, savedIds, likedIds }) {
+export function toArtworkDetail(artwork, { categorySlug, collectionSlug, position, total, savedIds, likedIds, currentUser }) {
   return {
-    ...toArtworkSummary(artwork, { categorySlug, collectionSlug, savedIds, likedIds }),
+    ...toArtworkSummary(artwork, { categorySlug, collectionSlug, savedIds, likedIds, currentUser }),
     position,
     total,
   }

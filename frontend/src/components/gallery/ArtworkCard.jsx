@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { fadeUp } from '../../lib/motion'
 import { setNavIntent } from '../../lib/navIntent'
 import { formatTakenDate, pad2 } from '../../lib/format'
-import { toggleSaved, useArtworkState } from '../../lib/artworkStore'
+import { removeArtwork, toggleSaved, useArtworkState } from '../../lib/artworkStore'
 import { ArtImage } from '../ui/ArtImage'
 import { IndexChip } from '../ui/Bits'
 import { Icon } from '../ui/Icon'
@@ -20,6 +20,15 @@ export function ArtworkCard({ artwork, number }) {
   const widthScale = Math.sqrt(work.ratio / 0.8).toFixed(3)
   // Screen-reader name that doesn't reveal the image's file name.
   const label = `work ${pad2(number)}, ${formatTakenDate(work)}`
+
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this photo? This cannot be undone.')) return
+    try {
+      await removeArtwork(work.id)
+    } catch (err) {
+      window.alert(err.message || 'Could not delete this photo.')
+    }
+  }
 
   return (
     <motion.li
@@ -71,6 +80,9 @@ export function ArtworkCard({ artwork, number }) {
             <Icon name="comment" size={13} />
             {work.noteCount > 0 && <span className="tabular-nums">{work.noteCount}</span>}
           </button>
+          {work.canDelete && (
+            <IconButton size="sm" icon="trash" aria-label={`Delete ${label}`} onClick={handleDelete} />
+          )}
         </div>
       </div>
     </motion.li>

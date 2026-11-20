@@ -5,7 +5,10 @@ import { MODES, PALETTES, useTheme } from '../../theme/ThemeProvider'
 
 const MODE_ICONS = { dark: 'moon', light: 'sun' }
 
-const chip = 'inline-flex h-8 items-center gap-2 rounded-full px-3 text-[10px] uppercase tracking-[0.18em] transition-colors duration-300'
+// flex-1 + justify-center: the Mode and Palette rows share one track width (the parent
+// flex-col stretches both to the widest row), so without flex-1 a row with fewer/narrower
+// chips than the other leaves dead space the active pill doesn't cover.
+const chip = 'inline-flex h-8 flex-1 items-center justify-center gap-2 rounded-full px-3 text-[10px] uppercase tracking-[0.18em] transition-colors duration-300'
 
 /** One icon button that opens the theme options: light/dark mode and colour palette. */
 export function ThemeSwitcher() {

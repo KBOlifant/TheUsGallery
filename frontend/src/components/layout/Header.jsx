@@ -3,6 +3,7 @@ import Image from 'next/image'
 import tgLogo from '../../assets/TG_Logo.png'
 import { ThemeSwitcher } from '../ui/ThemeSwitcher'
 import { AccountControl } from '../auth/AccountControl'
+import { Icon } from '../ui/Icon'
 import { scrollToTarget } from '../../lib/scroll'
 
 export function Wordmark({ className = '' }) {
@@ -18,9 +19,10 @@ export function Wordmark({ className = '' }) {
 }
 
 /**
- * @param nav  [{ label, to }] routes or [{ label, href: '#id' }] in-page anchors
+ * @param nav   [{ label, to }] routes or [{ label, href: '#id' }] in-page anchors
+ * @param home  show an icon-only button back to the home page
  */
-export function Header({ nav = [] }) {
+export function Header({ nav = [], home = false }) {
   const onAnchor = (e, href) => {
     e.preventDefault()
     scrollToTarget(href, { offset: -24 })
@@ -29,6 +31,16 @@ export function Header({ nav = [] }) {
   return (
     <header className="px-page flex flex-wrap items-center justify-between gap-x-10 gap-y-4 border-b border-line py-6">
       <Wordmark />
+
+      {home && (
+        <Link
+          href="/"
+          aria-label="Home"
+          className="inline-flex size-11 shrink-0 items-center justify-center border border-line-strong text-text transition-colors duration-300 ease-aperture hover:border-text"
+        >
+          <Icon name="home" size={18} />
+        </Link>
+      )}
 
       {nav.length > 0 && (
         <nav aria-label="Primary" className="order-last w-full md:order-none md:w-auto">

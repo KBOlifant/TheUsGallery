@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { inView, stagger } from '../../lib/motion'
+import { useVisibleWorks } from '../../lib/artworkStore'
 import { IconButton } from '../ui/Button'
 import { ArtworkCard } from './ArtworkCard'
 
 /** A row of artworks that scrolls sideways and bleeds off the right edge. */
-export function ArtworkRow({ works, label }) {
+export function ArtworkRow({ works: allWorks, label }) {
+  const works = useVisibleWorks(allWorks) // drops anything just deleted locally
   const scroller = useRef(null)
   const [edges, setEdges] = useState({ start: true, end: false })
 

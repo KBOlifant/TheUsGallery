@@ -3,13 +3,20 @@
  * (saved, noteCount), so a card and the open modal stay in sync without
  * refetching. Values from the server are the default; local updates override.
  */
-import { useSyncExternalStore } from 'react'
-import { setSaved, setLiked } from '../functions/api'
+import { useMemo, useSyncExternalStore } from 'react'
+import { deleteArtwork, setSaved, setLiked } from '../functions/api'
 
 const overrides = new Map()
 const listeners = new Set()
 
-const emit = () => listeners.forEach((l) => l())
+// Bumped on every change so useVisibleWorks can tell when to re-filter
+// (the overrides Map is mutated in place, so its own reference never changes).
+let version = 0
+
+const emit = () => {
+  version++
+  listeners.forEach((l) => l())
+}
 
 function subscribe(listener) {
   listeners.add(listener)
@@ -29,6 +36,12 @@ export function useArtworkState(artwork) {
     () => undefined, // server render: no local overrides yet
   )
   return artwork ? { ...artwork, ...patch } : artwork
+}
+
+/** `works`, minus any just deleted locally (see `removeArtwork`). */
+export function useVisibleWorks(works) {
+  const v = useSyncExternalStore(subscribe, () => version, () => 0)
+  return useMemo(() => works.filter((w) => !overrides.get(w.id)?.deleted), [works, v])
 }
 
 /** Optimistic save toggle; rolls back if the request fails. */
@@ -55,4 +68,10 @@ export async function toggleLiked(artwork) {
     patchArtwork(artwork.id, { liked: !next, likeCount: prevCount })
     throw err
   }
+}
+
+/** Delete an artwork on the server, then hide it everywhere it's shown (cards + modal). */
+export async function removeArtwork(artworkId) {
+  await deleteArtwork(artworkId)
+  patchArtwork(artworkId, { deleted: true })
 }

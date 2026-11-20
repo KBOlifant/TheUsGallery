@@ -1,14 +1,17 @@
 import {
   ArrowLeft,
   ArrowRight,
+  Bookmark,
   GripVertical,
   Heart,
+  Home,
   LogIn,
   LogOut,
   MessageSquare,
   Moon,
   Palette,
   Sun,
+  Trash2,
   Upload,
   X,
 } from 'lucide-react'
@@ -19,6 +22,8 @@ const icons = {
   'arrow-left': ArrowLeft,
   close: X,
   heart: Heart,
+  save: Bookmark,
+  home: Home,
   grip: GripVertical,
   comment: MessageSquare,
   sun: Sun,
@@ -27,6 +32,7 @@ const icons = {
   'log-in': LogIn,
   'log-out': LogOut,
   upload: Upload,
+  trash: Trash2,
 }
 
 export function Icon({ name, size = 16, filled = false, className = '' }) {

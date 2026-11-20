@@ -26,6 +26,9 @@ export class ApiError extends Error {
 /** 201 Created with a JSON body. */
 export const created = (data) => Response.json(data, { status: 201 })
 
+/** 204 No Content — a successful delete with nothing to return. */
+export const noContent = () => new Response(null, { status: 204 })
+
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024 // 10 MB
 
 /**

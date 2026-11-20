@@ -14,12 +14,6 @@ import { CollectionSection } from '../components/gallery/CollectionSection'
 import { Eyebrow } from '../components/ui/Bits'
 import { TextLink } from '../components/ui/Button'
 
-const nav = [
-  { label: 'Change category', to: '/' },
-  { label: 'Collection', href: '#collections' },
-  { label: 'About', href: '#about' },
-]
-
 export function GalleryPage() {
   const { categoryId } = useParams()
   const { data: category, error, loading } = useAsync(() => getCategory(categoryId), [categoryId])
@@ -29,7 +23,7 @@ export function GalleryPage() {
 
   return (
     <div id="top">
-      <Header nav={nav} />
+      <Header home />
 
       <main>
         {error ? (

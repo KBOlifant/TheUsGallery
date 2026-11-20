@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { clearNavIntent, readNavIntent } from '../../lib/navIntent'
 import { addNote, getArtwork, getNotes } from '../../functions/api'
-import { patchArtwork, toggleSaved, toggleLiked, useArtworkState } from '../../lib/artworkStore'
+import { patchArtwork, removeArtwork, toggleSaved, toggleLiked, useArtworkState } from '../../lib/artworkStore'
 import { useAuth } from '../../auth/AuthProvider'
 import { ease, transition } from '../../lib/motion'
 import { lockScroll, unlockScroll } from '../../lib/scroll'
@@ -72,6 +72,16 @@ export function ArtworkModal({ categoryId, workId }) {
     const note = await addNote(workId, { text })
     notes.setData((list) => [...(list ?? []), note])
     patchArtwork(workId, { noteCount: (notes.data?.length ?? 0) + 1 })
+  }
+
+  const handleDelete = async () => {
+    if (!window.confirm('Delete this photo? This cannot be undone.')) return
+    try {
+      await removeArtwork(workId)
+      close()
+    } catch (err) {
+      window.alert(err.message || 'Could not delete this photo.')
+    }
   }
 
   return (
@@ -147,21 +157,28 @@ export function ArtworkModal({ categoryId, workId }) {
                 <div className="flex flex-wrap items-center gap-3">
                   <Button
                     variant={work.saved ? 'accent' : 'outline'}
-                    icon="heart"
+                    icon="save"
                     iconFilled={work.saved}
                     aria-pressed={work.saved}
                     onClick={() => toggleSaved(work).catch(() => {})}
                   >
-                    {work.saved ? 'Saved' : 'Save this work'}
+                    {work.saved ? 'Saved' : 'Save image'}
                   </Button>
                   <Button
                     variant={work.liked ? 'accent' : 'outline'}
+                    icon="heart"
+                    iconFilled={work.liked}
                     aria-pressed={work.liked}
                     onClick={() => toggleLiked(work).catch(() => {})}
                   >
                     {work.liked ? 'Liked' : 'Like'}
                     {work.likeCount > 0 && <span className="text-muted">· {work.likeCount}</span>}
                   </Button>
+                  {work.canDelete && (
+                    <Button variant="outline" icon="trash" onClick={handleDelete}>
+                      Delete
+                    </Button>
+                  )}
                 </div>
               )}
 

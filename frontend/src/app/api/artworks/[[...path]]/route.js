@@ -1,11 +1,12 @@
 import { resource, route } from '@/server/http'
-import { createArtwork, getArtwork, getNotes, addNote } from '@/server/controllers/artworks'
+import { createArtwork, getArtwork, deleteArtwork, getNotes, addNote } from '@/server/controllers/artworks'
 import { like, unlike, setSaved, unsetSaved } from '@/server/controllers/interactions'
 
 // All /api/artworks/* endpoints.
 const handle = resource([
   ['POST', '/', route(createArtwork, { access: 'approved', file: 'image' })],
   ['GET', '/:id', route(getArtwork, { access: 'approved' })],
+  ['DELETE', '/:id', route(deleteArtwork, { access: 'approved' })],
   ['GET', '/:id/notes', route(getNotes, { access: 'approved' })],
   ['POST', '/:id/notes', route(addNote, { access: 'approved' })],
   ['PUT', '/:id/save', route(setSaved, { access: 'approved' })],

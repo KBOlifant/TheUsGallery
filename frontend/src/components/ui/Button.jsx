@@ -46,7 +46,7 @@ export const IconButton = forwardRef(function IconButton(
       )}
       {...props}
     >
-      <Icon name={icon} size={iconSize ?? (size === 'sm' ? 13 : 18)} filled={active && icon === 'heart'} />
+      <Icon name={icon} size={iconSize ?? (size === 'sm' ? 13 : 18)} filled={active && (icon === 'heart' || icon === 'save')} />
     </button>
   )
 })
