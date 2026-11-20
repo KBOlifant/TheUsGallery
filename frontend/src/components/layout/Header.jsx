@@ -36,7 +36,7 @@ export function Header({ nav = [], home = false }) {
         <Link
           href="/"
           aria-label="Home"
-          className="inline-flex size-11 shrink-0 items-center justify-center border border-line-strong text-text transition-colors duration-300 ease-aperture hover:border-text"
+          className="sm:inline-flex hidden size-11 shrink-0 items-center justify-center border border-line-strong text-text transition-colors duration-300 ease-aperture hover:border-text"
         >
           <Icon name="home" size={18} />
         </Link>

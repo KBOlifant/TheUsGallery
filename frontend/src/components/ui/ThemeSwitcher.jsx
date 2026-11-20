@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Icon } from './Icon'
-import { MODES, PALETTES, useTheme } from '../../theme/ThemeProvider'
+import { MODES, PALETTES, VIEWS, useTheme } from '../../theme/ThemeProvider'
 
 const MODE_ICONS = { dark: 'moon', light: 'sun' }
+const VIEW_ICONS = { single: 'rows', multi: 'grid' }
 
 // flex-1 + justify-center: the Mode and Palette rows share one track width (the parent
 // flex-col stretches both to the widest row), so without flex-1 a row with fewer/narrower
@@ -12,7 +13,7 @@ const chip = 'inline-flex h-8 flex-1 items-center justify-center gap-2 rounded-f
 
 /** One icon button that opens the theme options: light/dark mode and colour palette. */
 export function ThemeSwitcher() {
-  const { mode, setMode, palette, setPalette } = useTheme()
+  const { mode, setMode, palette, setPalette, view, setView } = useTheme()
   const [open, setOpen] = useState(false)
   const root = useRef(null)
 
@@ -91,6 +92,28 @@ export function ThemeSwitcher() {
                     >
                       <span className="size-2.5 rounded-full" style={{ background: p.dot }} aria-hidden="true" />
                       <span className="max-sm:sr-only">{p.label}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted">View</span>
+              <div role="group" aria-label="View" className="flex gap-1 rounded-full border border-line-strong p-1">
+                {VIEWS.map((v) => {
+                  const active = v.id === view
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      aria-pressed={active}
+                      aria-label={v.label}
+                      onClick={() => setView(v.id)}
+                      className={`${chip} ${active ? 'bg-raised text-text' : 'text-muted hover:text-text'}`}
+                    >
+                      <Icon name={VIEW_ICONS[v.id]} size={14} />
+                      <span className="max-sm:sr-only">{v.label}</span>
                     </button>
                   )
                 })}

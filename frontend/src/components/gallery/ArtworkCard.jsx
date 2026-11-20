@@ -12,8 +12,12 @@ import { IconButton } from '../ui/Button'
 
 export const artworkPath = (work) => `/collections/${work.categoryId}/works/${work.id}`
 
-/** Portrait artwork card. Width scales with the image ratio so rows feel hung, not gridded. */
-export function ArtworkCard({ artwork, number }) {
+/**
+ * Portrait artwork card.
+ * `layout="row"` (default): width scales with the image ratio so a scrolling row feels hung, not gridded.
+ * `layout="grid"`: fills its grid cell instead — see ArtworkGrid.jsx (the multi-line view).
+ */
+export function ArtworkCard({ artwork, number, layout = 'row' }) {
   const work = useArtworkState(artwork)
   const router = useRouter()
   const to = artworkPath(work)
@@ -33,8 +37,8 @@ export function ArtworkCard({ artwork, number }) {
   return (
     <motion.li
       variants={fadeUp}
-      className="group relative flex shrink-0 snap-start flex-col gap-3.5"
-      style={{ width: `calc(${widthScale} * var(--card-w))` }}
+      className={`group relative flex flex-col gap-3.5 ${layout === 'row' ? 'shrink-0 snap-start' : ''}`}
+      style={layout === 'row' ? { width: `calc(${widthScale} * var(--card-w))` } : undefined}
     >
       <div className="relative border border-line" style={{ aspectRatio: work.ratio }}>
         <ArtImage image={work.image} className="absolute inset-0" />

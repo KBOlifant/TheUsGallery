@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion'
 import { fadeUp, inView, stagger } from '../../lib/motion'
+import { useTheme } from '../../theme/ThemeProvider'
 import { Eyebrow } from '../ui/Bits'
 import { ArtworkRow } from './ArtworkRow'
+import { ArtworkGrid } from './ArtworkGrid'
 
 export function CollectionSection({ collection }) {
+  const { view } = useTheme()
   const headingId = `collection-${collection.id}`
 
   return (
@@ -30,7 +33,11 @@ export function CollectionSection({ collection }) {
 
       <hr className="border-line" />
 
-      <ArtworkRow works={collection.works} label={collection.title} />
+      {view === 'multi' ? (
+        <ArtworkGrid works={collection.works} label={collection.title} />
+      ) : (
+        <ArtworkRow works={collection.works} label={collection.title} />
+      )}
     </section>
   )
 }
