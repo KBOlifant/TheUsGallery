@@ -97,6 +97,10 @@ export const adminApproveUser = (id) =>
 export const adminRejectUser = (id) =>
   USE_MOCK ? realOnly('adminRejectUser') : request(`/admin/users/${enc(id)}/reject`, { method: 'PUT' })
 
+/** Set a user's role. `role` = 'user' | 'co-admin' | 'admin'. */
+export const adminSetUserRole = (id, role) =>
+  USE_MOCK ? realOnly('adminSetUserRole') : request(`/admin/users/${enc(id)}/role`, { method: 'PUT', body: { role } })
+
 export const adminListCollections = (categoryId) =>
   USE_MOCK ? realOnly('adminListCollections') : request(`/admin/collections?categoryId=${enc(categoryId)}`)
 

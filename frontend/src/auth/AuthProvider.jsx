@@ -93,6 +93,9 @@ export function AuthProvider({ children }) {
     isAuthed: !!user,
     isApproved: profile?.status === 'approved',
     isAdmin: profile?.role === 'admin',
+    isCoAdmin: profile?.role === 'co-admin',
+    // Admins and co-admins may create their own category/collection while uploading.
+    canManageCollections: profile?.role === 'admin' || profile?.role === 'co-admin',
     status: profile?.status ?? null,
     refreshProfile,
     signInEmail,

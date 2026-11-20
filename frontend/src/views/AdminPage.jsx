@@ -11,6 +11,7 @@ import {
   adminListUsers,
   adminApproveUser,
   adminRejectUser,
+  adminSetUserRole,
   getCategories,
   getCategory,
   adminCreateCategory,
@@ -119,6 +120,8 @@ function UsersTab() {
     }
   }
 
+  const setRole = (id, role) => act(id, () => adminSetUserRole(id, role), 'role')
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-2">
@@ -143,7 +146,7 @@ function UsersTab() {
             <li key={u.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
               <div className="min-w-0">
                 <p className="truncate text-[14px] text-text">{u.displayName || u.email || '(no name)'}</p>
-                <p className="truncate text-[12px] text-muted">{u.email} · <span className="capitalize">{u.status}</span>{u.role === 'admin' && ' · admin'}</p>
+                <p className="truncate text-[12px] text-muted">{u.email} · <span className="capitalize">{u.status}</span>{u.role !== 'user' && ` · ${u.role}`}</p>
               </div>
               <div className="flex gap-2">
                 {u.status !== 'approved' && (
@@ -151,6 +154,13 @@ function UsersTab() {
                 )}
                 {u.status !== 'rejected' && (
                   <Button disabled={busyId === u.id} onClick={() => act(u.id, adminRejectUser, 'reject')}>Reject</Button>
+                )}
+                {u.role !== 'admin' && (
+                  u.role === 'co-admin' ? (
+                    <Button disabled={busyId === u.id} onClick={() => setRole(u.id, 'user')}>Remove co-admin</Button>
+                  ) : (
+                    <Button disabled={busyId === u.id} onClick={() => setRole(u.id, 'co-admin')}>Make co-admin</Button>
+                  )
                 )}
               </div>
             </li>

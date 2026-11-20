@@ -61,7 +61,7 @@ export function AccountControl() {
               onClick={() => setMenuOpen(false)}
               className="block px-3 py-2 text-[13px] text-text transition-colors hover:bg-line/40"
             >
-              Upload a work
+              Upload Memories
             </Link>
           )}
           {isAdmin && (
@@ -71,7 +71,7 @@ export function AccountControl() {
               onClick={() => setMenuOpen(false)}
               className="block px-3 py-2 text-[13px] text-text transition-colors hover:bg-line/40"
             >
-              Admin dashboard
+              Admin Dashboard
             </Link>
           )}
           <button
@@ -84,7 +84,7 @@ export function AccountControl() {
             className="flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] text-text transition-colors hover:bg-line/40"
           >
             <Icon name="log-out" size={14} />
-            Sign out
+            Sign Out
           </button>
         </div>
       )}

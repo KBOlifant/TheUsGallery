@@ -6,7 +6,9 @@ const userSchema = new mongoose.Schema(
     email: { type: String, default: '' },
     displayName: { type: String, default: '' },
     photoURL: { type: String, default: '' },
-    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    // co-admin: an approved member who may create their own categories/collections
+    // while uploading, without the rest of the admin panel (user approval, deletes, …).
+    role: { type: String, enum: ['user', 'co-admin', 'admin'], default: 'user' },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     approvedAt: { type: Date, default: null },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },

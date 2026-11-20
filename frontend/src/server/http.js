@@ -90,6 +90,11 @@ const guards = {
     requireUser(user)
     if (user.status !== 'approved') throw new ApiError('Your account is pending approval', 403)
   },
+  // co-admin or admin: enough to create a category/collection while uploading.
+  coAdmin: (user) => {
+    requireUser(user)
+    if (user.role !== 'admin' && user.role !== 'co-admin') throw new ApiError('Admin or co-admin access required', 403)
+  },
   admin: (user) => {
     requireUser(user)
     if (user.role !== 'admin') throw new ApiError('Admin access required', 403)

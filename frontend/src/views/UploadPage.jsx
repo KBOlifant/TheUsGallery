@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Header } from '../components/layout/Header'
 import { Button } from '../components/ui/Button'
 import { useAuth } from '../auth/AuthProvider'
-import { getCategories, getCategory, uploadArtwork } from '../functions/api'
+import { getCategories, getCategory, uploadArtwork, adminCreateCategory, adminCreateCollection } from '../functions/api'
 import { createUploadQueue } from '../lib/uploadQueue'
 
 function Field({ label, children }) {
@@ -54,7 +54,7 @@ function QueueRow({ job, onRetry, onRemove }) {
 }
 
 export function UploadPage() {
-  const { loading, isApproved, isAuthed } = useAuth()
+  const { loading, isApproved, isAuthed, canManageCollections } = useAuth()
 
   const [cats, setCats] = useState([])
   const [collections, setCollections] = useState([])
@@ -62,6 +62,14 @@ export function UploadPage() {
   const [error, setError] = useState(null)
   const [jobs, setJobs] = useState([])
   const fileInput = useRef(null)
+
+  // Inline "new category" / "new collection" — admins and co-admins only.
+  const [newCategoryOpen, setNewCategoryOpen] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState('')
+  const [creatingCategory, setCreatingCategory] = useState(false)
+  const [newCollectionOpen, setNewCollectionOpen] = useState(false)
+  const [newCollectionTitle, setNewCollectionTitle] = useState('')
+  const [creatingCollection, setCreatingCollection] = useState(false)
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
 
@@ -92,6 +100,44 @@ export function UploadPage() {
       setForm((f) => ({ ...f, collectionId: cat.collections.some((c) => c.id === f.collectionId) ? f.collectionId : cat.collections[0]?.id || '' }))
     }, (e) => setError(e.message))
   }, [form.categoryId])
+
+  const createCategory = async (e) => {
+    e.preventDefault()
+    if (!newCategoryName.trim()) return
+    setCreatingCategory(true)
+    setError(null)
+    try {
+      const created = await adminCreateCategory({ name: newCategoryName.trim() })
+      const list = await getCategories()
+      setCats(list)
+      setForm((f) => ({ ...f, categoryId: created.id }))
+      setNewCategoryName('')
+      setNewCategoryOpen(false)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setCreatingCategory(false)
+    }
+  }
+
+  const createCollection = async (e) => {
+    e.preventDefault()
+    if (!newCollectionTitle.trim() || !form.categoryId) return
+    setCreatingCollection(true)
+    setError(null)
+    try {
+      const created = await adminCreateCollection({ categoryId: form.categoryId, title: newCollectionTitle.trim() })
+      const cat = await getCategory(form.categoryId)
+      setCollections(cat.collections)
+      setForm((f) => ({ ...f, collectionId: created.id }))
+      setNewCollectionTitle('')
+      setNewCollectionOpen(false)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setCreatingCollection(false)
+    }
+  }
 
   const addFiles = (fileList) => {
     setError(null)
@@ -125,20 +171,62 @@ export function UploadPage() {
         ) : (
           <div className="mt-8 flex max-w-xl flex-col gap-5">
             <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Category">
-                {(id) => (
-                  <select id={id} value={form.categoryId} onChange={(e) => set('categoryId', e.target.value)} className={inputCls}>
-                    {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                  </select>
+              <div className="flex flex-col gap-1.5">
+                <Field label="Category">
+                  {(id) => (
+                    <select id={id} value={form.categoryId} onChange={(e) => set('categoryId', e.target.value)} className={inputCls}>
+                      {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
+                  )}
+                </Field>
+                {canManageCollections && (
+                  newCategoryOpen ? (
+                    <form onSubmit={createCategory} className="flex gap-2">
+                      <input
+                        autoFocus
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        placeholder="New category name"
+                        className={`${inputCls} flex-1`}
+                      />
+                      <Button type="submit" disabled={creatingCategory || !newCategoryName.trim()}>{creatingCategory ? '…' : 'Add'}</Button>
+                      <Button type="button" onClick={() => { setNewCategoryOpen(false); setNewCategoryName('') }}>Cancel</Button>
+                    </form>
+                  ) : (
+                    <button type="button" onClick={() => setNewCategoryOpen(true)} className="self-start text-[11px] uppercase tracking-[0.15em] text-muted hover:text-text">
+                      + New category
+                    </button>
+                  )
                 )}
-              </Field>
-              <Field label="Collection">
-                {(id) => (
-                  <select id={id} value={form.collectionId} onChange={(e) => set('collectionId', e.target.value)} className={inputCls}>
-                    {collections.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
-                  </select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Field label="Collection">
+                  {(id) => (
+                    <select id={id} value={form.collectionId} onChange={(e) => set('collectionId', e.target.value)} className={inputCls}>
+                      {collections.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
+                    </select>
+                  )}
+                </Field>
+                {canManageCollections && (
+                  newCollectionOpen ? (
+                    <form onSubmit={createCollection} className="flex gap-2">
+                      <input
+                        autoFocus
+                        value={newCollectionTitle}
+                        onChange={(e) => setNewCollectionTitle(e.target.value)}
+                        placeholder="New collection title"
+                        className={`${inputCls} flex-1`}
+                      />
+                      <Button type="submit" disabled={creatingCollection || !newCollectionTitle.trim()}>{creatingCollection ? '…' : 'Add'}</Button>
+                      <Button type="button" onClick={() => { setNewCollectionOpen(false); setNewCollectionTitle('') }}>Cancel</Button>
+                    </form>
+                  ) : (
+                    <button type="button" onClick={() => setNewCollectionOpen(true)} disabled={!form.categoryId} className="self-start text-[11px] uppercase tracking-[0.15em] text-muted hover:text-text disabled:opacity-40">
+                      + New collection
+                    </button>
+                  )
                 )}
-              </Field>
+              </div>
             </div>
 
             <Field label="Images — as many as you like">

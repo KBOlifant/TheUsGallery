@@ -59,3 +59,17 @@ export async function rejectUser({ params }) {
   await user.save()
   return { user: toProfile(user) }
 }
+
+const ROLES = ['user', 'co-admin', 'admin']
+
+/** PUT /admin/users/:id/role  { role: 'user' | 'co-admin' | 'admin' } */
+export async function setUserRole({ params, body }) {
+  if (!ROLES.includes(body?.role)) throw new ApiError(`role must be one of: ${ROLES.join(', ')}`, 400)
+
+  const user = await User.findById(params.id)
+  if (!user) throw new ApiError('User not found', 404)
+
+  user.role = body.role
+  await user.save()
+  return { user: toProfile(user) }
+}
