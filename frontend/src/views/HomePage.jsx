@@ -1,7 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { AnimatePresence } from 'framer-motion'
+import { takeResumePath } from '../lib/lastPage'
 import { getCategories } from '../functions/api'
 import { useAuth } from '../auth/AuthProvider'
 import { AccessModal } from '../components/auth/AccessModal'
@@ -23,7 +25,13 @@ const heroOverlay = (
 
 export function HomePage() {
   useLenis()
+  const router = useRouter()
   const { data: categories, error } = useAsync(getCategories, [])
+
+  useEffect(() => {
+    const path = takeResumePath()
+    if (path) router.replace(path)
+  }, [router])
   const { isApproved } = useAuth()
   const [gateOpen, setGateOpen] = useState(false)
 
