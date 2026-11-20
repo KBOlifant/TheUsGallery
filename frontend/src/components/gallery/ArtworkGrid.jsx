@@ -5,7 +5,7 @@ import { ArtworkCard } from './ArtworkCard'
 
 /**
  * The "multi-line" view: a collection's works wrap onto as many rows as they need,
- * at most 3 per row (fewer on narrower screens), instead of one scrolling row.
+ * 3 per row on every screen size, instead of one scrolling row.
  */
 export function ArtworkGrid({ works: allWorks, label }) {
   const works = useVisibleWorks(allWorks) // drops anything just deleted locally
@@ -16,7 +16,7 @@ export function ArtworkGrid({ works: allWorks, label }) {
         aria-label={label}
         variants={stagger(0.08)}
         {...inView}
-        className="px-page grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
+        className="px-page grid grid-cols-3 gap-x-3 gap-y-10 sm:gap-x-6"
       >
         {works.map((w, i) => (
           <ArtworkCard key={w.id} artwork={w} number={i + 1} layout="grid" />
