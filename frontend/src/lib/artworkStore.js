@@ -4,7 +4,7 @@
  * refetching. Values from the server are the default; local updates override.
  */
 import { useMemo, useSyncExternalStore } from 'react'
-import { deleteArtwork, setSaved, setLiked } from '../functions/api'
+import { deleteArtwork, setSaved, setLiked, addDislike as apiAddDislike } from '../functions/api'
 
 const overrides = new Map()
 const listeners = new Set()
@@ -66,6 +66,19 @@ export async function toggleLiked(artwork) {
     patchArtwork(artwork.id, { liked: res.liked, likeCount: res.likeCount })
   } catch (err) {
     patchArtwork(artwork.id, { liked: !next, likeCount: prevCount })
+    throw err
+  }
+}
+
+/** Add one dislike; compounds (no toggle), reconciles with the server count, rolls back on error. */
+export async function addDislike(artwork) {
+  const prevCount = artwork.dislikeCount ?? 0
+  patchArtwork(artwork.id, { dislikeCount: prevCount + 1 })
+  try {
+    const res = await apiAddDislike(artwork.id)
+    patchArtwork(artwork.id, { dislikeCount: res.dislikeCount })
+  } catch (err) {
+    patchArtwork(artwork.id, { dislikeCount: prevCount })
     throw err
   }
 }

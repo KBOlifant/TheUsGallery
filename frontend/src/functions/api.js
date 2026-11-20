@@ -67,6 +67,10 @@ export const setLiked = (artworkId, liked) =>
     ? realOnly('setLiked')
     : request(`/artworks/${enc(artworkId)}/like`, { method: liked ? 'PUT' : 'DELETE' })
 
+/** Add one dislike; compounds (no toggle, no per-user limit) → { id, dislikeCount }. */
+export const addDislike = (artworkId) =>
+  USE_MOCK ? realOnly('addDislike') : request(`/artworks/${enc(artworkId)}/dislike`, { method: 'POST' })
+
 /**
  * Upload one image. `fields` = { categoryId, collectionId }. `file` is a File/Blob.
  * The server reads the title, year and other details from the file itself.

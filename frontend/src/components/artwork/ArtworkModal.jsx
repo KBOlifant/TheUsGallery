@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { clearNavIntent, readNavIntent } from '../../lib/navIntent'
 import { addNote, getArtwork, getNotes } from '../../functions/api'
-import { patchArtwork, removeArtwork, toggleSaved, toggleLiked, useArtworkState } from '../../lib/artworkStore'
+import { addDislike, patchArtwork, removeArtwork, toggleSaved, toggleLiked, useArtworkState } from '../../lib/artworkStore'
 import { useAuth } from '../../auth/AuthProvider'
 import { ease, transition } from '../../lib/motion'
 import { lockScroll, unlockScroll } from '../../lib/scroll'
@@ -173,6 +173,11 @@ export function ArtworkModal({ categoryId, workId }) {
                   >
                     {work.liked ? 'Liked' : 'Like'}
                     {work.likeCount > 0 && <span className="text-muted">· {work.likeCount}</span>}
+                  </Button>
+                  <Button variant="outline" onClick={() => addDislike(work).catch(() => {})}>
+                    <span aria-hidden="true">🍅</span>
+                    Tomato
+                    {work.dislikeCount > 0 && <span className="text-muted">· {work.dislikeCount}</span>}
                   </Button>
                   {work.canDelete && (
                     <Button variant="outline" icon="trash" onClick={handleDelete}>

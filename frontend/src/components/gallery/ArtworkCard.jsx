@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { fadeUp } from '../../lib/motion'
 import { setNavIntent } from '../../lib/navIntent'
 import { formatTakenDate, pad2 } from '../../lib/format'
-import { removeArtwork, toggleSaved, useArtworkState } from '../../lib/artworkStore'
+import { removeArtwork, toggleLiked, toggleSaved, useArtworkState } from '../../lib/artworkStore'
 import { ArtImage } from '../ui/ArtImage'
 import { IndexChip } from '../ui/Bits'
 import { Icon } from '../ui/Icon'
@@ -22,6 +22,7 @@ export function ArtworkCard({ artwork, number, layout = 'row' }) {
   const router = useRouter()
   const to = artworkPath(work)
   const widthScale = Math.sqrt(work.ratio / 0.8).toFixed(3)
+  const isGrid = layout === 'grid'
   // Screen-reader name that doesn't reveal the image's file name.
   const label = `work ${pad2(number)}, ${formatTakenDate(work)}`
 
@@ -43,11 +44,28 @@ export function ArtworkCard({ artwork, number, layout = 'row' }) {
       <div className="relative border border-line" style={{ aspectRatio: work.ratio }}>
         <ArtImage image={work.image} className="absolute inset-0" />
         <IndexChip className="absolute top-3 left-3">{pad2(number)}</IndexChip>
+
+        <button
+          type="button"
+          aria-pressed={work.liked}
+          aria-label={work.liked ? `Unlike ${label}` : `Like ${label}`}
+          onClick={() => toggleLiked(work).catch(() => {})}
+          className={`absolute top-3 right-3 z-10 drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)] transition-colors duration-300 ${
+            work.liked ? 'text-red-500' : 'text-paper/90 hover:text-paper'
+          }`}
+        >
+          <Icon name="heart" size={20} filled={work.liked} />
+        </button>
       </div>
 
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h3 className="font-display text-[22px] leading-[1.15]">
+          {isGrid && work.dislikeCount > 0 && (
+            <span className="text-[11px] tracking-[0.08em] text-muted" aria-label={`${work.dislikeCount} dislikes`}>
+              <span aria-hidden="true">🍅 {work.dislikeCount}</span>
+            </span>
+          )}
+          <h3 className={`font-display leading-[1.15] ${isGrid ? 'text-[15px] sm:text-[22px]' : 'text-[22px]'}`}>
             {/* Stretched link: the whole card opens the work; buttons sit above it. */}
             {/* scroll={false}: the gallery stays put under the modal. */}
             <Link
@@ -63,7 +81,7 @@ export function ArtworkCard({ artwork, number, layout = 'row' }) {
           </h3>
         </div>
 
-        <div className="relative z-10 flex gap-1.5 pt-1">
+        <div className={`relative z-10 flex gap-1.5 pt-1 ${isGrid ? 'hidden sm:flex' : ''}`}>
           <IconButton
             size="sm"
             icon="heart"

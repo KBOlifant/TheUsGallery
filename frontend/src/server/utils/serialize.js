@@ -31,7 +31,7 @@ function canDelete(artwork, currentUser) {
 
 /**
  * ArtworkSummary { id, title, artist, year, ratio, image, categoryId, collectionId,
- *                  saved, noteCount, likeCount, liked, canDelete }
+ *                  saved, noteCount, likeCount, liked, dislikeCount, canDelete }
  * `savedIds` / `likedIds` are Sets of artwork _id strings for the current user
  * (empty when unauthenticated). `currentUser` is the authenticated User doc (or null).
  */
@@ -51,6 +51,7 @@ export function toArtworkSummary(artwork, { categorySlug, collectionSlug, savedI
     liked: likedIds ? likedIds.has(id) : false,
     noteCount: artwork.noteCount ?? 0,
     likeCount: artwork.likeCount ?? 0,
+    dislikeCount: artwork.dislikeCount ?? 0,
     canDelete: canDelete(artwork, currentUser),
   }
 }

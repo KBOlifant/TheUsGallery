@@ -1,6 +1,6 @@
 import { resource, route } from '@/server/http'
 import { createArtwork, getArtwork, deleteArtwork, getNotes, addNote } from '@/server/controllers/artworks'
-import { like, unlike, setSaved, unsetSaved } from '@/server/controllers/interactions'
+import { like, unlike, setSaved, unsetSaved, dislike } from '@/server/controllers/interactions'
 
 // All /api/artworks/* endpoints.
 const handle = resource([
@@ -13,6 +13,7 @@ const handle = resource([
   ['DELETE', '/:id/save', route(unsetSaved, { access: 'approved' })],
   ['PUT', '/:id/like', route(like, { access: 'approved' })],
   ['DELETE', '/:id/like', route(unlike, { access: 'approved' })],
+  ['POST', '/:id/dislike', route(dislike, { access: 'approved' })],
 ])
 
 export { handle as GET, handle as POST, handle as PUT, handle as DELETE }

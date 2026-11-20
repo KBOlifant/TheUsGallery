@@ -21,6 +21,7 @@ const artworkSchema = new mongoose.Schema(
     uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     // Denormalized counts so list endpoints avoid N+1 queries.
     likeCount: { type: Number, default: 0 },
+    dislikeCount: { type: Number, default: 0 }, // compounds: no per-user limit, unlike likeCount
     noteCount: { type: Number, default: 0 },
   },
   { timestamps: true }

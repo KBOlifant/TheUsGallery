@@ -45,6 +45,13 @@ export async function unlike({ params, user }) {
   return { id: params.id, liked: false, likeCount }
 }
 
+/** POST /artworks/:id/dislike → { id, dislikeCount }. Compounds — no per-user limit, unlike likes/saves. */
+export async function dislike({ params }) {
+  const artwork = await findArtwork(params.id)
+  const updated = await Artwork.findByIdAndUpdate(artwork._id, { $inc: { dislikeCount: 1 } }, { new: true }).lean()
+  return { id: params.id, dislikeCount: updated.dislikeCount }
+}
+
 /** PUT /artworks/:id/save — add to favourites. */
 export async function setSaved({ params, user }) {
   const artwork = await findArtwork(params.id)
